@@ -103,6 +103,7 @@ __HAL_TIM_SET_COMPARE(&htim2, TIM_CHANNEL_1, pulse);
 ---
 
 ## Kompilasi dan Deploy
+![Screenshot 2025-04-16 132828](https://github.com/user-attachments/assets/c4a6eb6d-043b-49d2-a59b-2d5afcec2367)
 
 ### Menggunakan Keil uVision
 
