@@ -1,8 +1,0 @@
-Area | CERT Fix
-Inisialisasi Variabel | Selalu inisialisasi (adcValue = 0U)
-Cek Return Function | HAL_* functions dicek hasilnya (if (HAL_ADC_Start... != HAL_OK))
-Magic Number | Diberi komentar atau diganti makro jika perlu
-Overflow Handling | Cek adcValue <= 4095U sebelum digunakan dalam kalkulasi
-Loop Infinite | while(1) dibiarkan, tapi idealnya dengan escape path / watchdog
-Type Consistency | Gunakan uint32_t, int32_t eksplisit, hindari int, long mentah
-Null Pointer Safety (opsional) | Jika ada alokasi dinamis, harus ada null check
