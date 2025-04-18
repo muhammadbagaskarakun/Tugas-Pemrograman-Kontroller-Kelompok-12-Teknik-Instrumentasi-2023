@@ -10,12 +10,12 @@ Muhammad Bagaskara (2042231017)
 Ziyad Zaky Permana (2042231077)
 ---
 
-## Tujuan Teknis
+## Tujuan
 
 - Mendeteksi besaran tekanan dari pengguna menggunakan sensor FSR.
 - Mengatur posisi atau resistansi kruk secara otomatis dengan motor servo berbasis logika pembacaan tekanan.
 - Memberikan umpan balik terhadap beban berlebih melalui mekanisme kontrol adaptif.
-- Memungkinkan debugging dan analisis data melalui koneksi UART serial.
+- Memungkinkan debugging dan analisis script melalui Compiler C atau percobaan langsung
 
 ---
 
@@ -39,13 +39,13 @@ Ziyad Zaky Permana (2042231077)
 - Keil uVision dengan file project `.uvprojx` yang dihasilkan dari STM32CubeMX
 - STM32CubeMX untuk konfigurasi pin, clock, dan peripheral
 - VSCode untuk pengembangan atau simulasi logika terpisah
-- GNU GCC (opsional untuk simulasi PC)
+- GNU GCC (untuk simulasi C)
 
 ---
 
 ## File Utama
 
-- `main.c`: Program utama yang mengatur siklus kerja pembacaan sensor, logika pemetaan ke PWM servo, dan komunikasi UART
+- `main.c`: Program utama yang mengatur siklus kerja pembacaan sensor, dan logika pemetaan ke PWM servo
 - `main.h`: Header utama (hanya digunakan saat menggunakan Keil / STM32)
 - `Tubes-2 pemkon kel12.uvprojx`: File proyek STM32 untuk Keil uVision IDE
 
