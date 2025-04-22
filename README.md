@@ -111,12 +111,7 @@ gcc test2.c -o simulasi_servo
 
 ---
 
-## 📌 Kesimpulan
+## Kesimpulan
 
 Proyek ini menerapkan prinsip pengembangan **V-Model**, mulai dari analisis kebutuhan hingga pengujian sistem menggunakan simulasi berbasis terminal dan kode embedded STM32 HAL. Pendekatan ini memungkinkan sistem untuk diujicoba dengan atau tanpa perangkat keras, mempercepat iterasi pengembangan, dan meningkatkan keandalan sistem bantu jalan adaptif seperti kruk cerdas.
-
-🔗 [Repositori GitHub](https://github.com/muhammadbagaskarakun/Tugas-Pemrograman-Kontroller-Kelompok-12-Teknik-Instrumentasi-2023)
-
---- 
-
-Kalau kamu mau, aku juga bisa bantu buatkan versi markdown siap pakai atau file `README.md` langsung. Mau aku kirimkan file-nya juga?
+---
