@@ -4,10 +4,11 @@
 
 Proyek ini merupakan implementasi dari alat bantu jalan kruk cerdas berbasis mikrokontroler STM32 Nucleo F446RE, yang dilengkapi dengan sensor tekanan FSR 402 dan motor servo MG996R. Sistem ini dirancang untuk membantu pengguna kruk dalam mendistribusikan tekanan secara optimal guna mencegah cedera kronis, terutama akibat penggunaan kruk dalam jangka panjang dan beban yang tidak merata.
 Logika sistem menggunakan pembacaan ADC dari sensor FSR untuk mengontrol posisi servo melalui sinyal PWM. Tujuan utama adalah menciptakan sistem kruk yang dapat beradaptasi secara dinamis terhadap tekanan yang diberikan oleh pengguna.
-Anggota Kelompok:
-Muhammad Aufa Affandi (2042231011)
-Muhammad Bagaskara (2042231017)
-Ziyad Zaky Permana (2042231077)
+
+## Anggota Kelompok:
+## Muhammad Aufa Affandi (2042231011)
+## Muhammad Bagaskara (2042231017)
+## Ziyad Zaky Permana (2042231077)
 
 Pembimbing:
 Ahmad Radhy
