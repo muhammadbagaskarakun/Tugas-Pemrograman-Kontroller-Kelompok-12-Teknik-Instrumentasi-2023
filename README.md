@@ -8,6 +8,9 @@ Anggota Kelompok:
 Muhammad Aufa Affandi (2042231011)
 Muhammad Bagaskara (2042231017)
 Ziyad Zaky Permana (2042231077)
+
+Pembimbing:
+Ahmad Radhy
 ---
 
 ## Tujuan
@@ -31,117 +34,89 @@ Ziyad Zaky Permana (2042231077)
 | Sumber Daya         | USB 5V / Adaptor eksternal                                       |
 
 ---
-
-## Perangkat Lunak
-
-### Tools
-
-- Keil uVision dengan file project `.uvprojx` yang dihasilkan dari STM32CubeMX
-- STM32CubeMX untuk konfigurasi pin, clock, dan peripheral
-- VSCode untuk pengembangan atau simulasi logika terpisah
-- GNU GCC (untuk simulasi C)
-
 ---
 
-## File Utama
-
-- `main.c`: Program utama yang mengatur siklus kerja pembacaan sensor, dan logika pemetaan ke PWM servo
-- `main.h`: Header utama (hanya digunakan saat menggunakan Keil / STM32)
-- `Tubes-2 pemkon kel12.uvprojx`: File proyek STM32 untuk Keil uVision IDE
-
----
-
-## Struktur Direktori
+## 🛠️ Struktur Proyek (Berbasis V-Model)
 
 ```
-.
-├── Core/
-│   ├── Inc/
-│   │   └── main.h
-│   └── Src/
-│       └── main.c
-├── Tubes-2 pemkon kel12.uvprojx
-├── README.md
+├── Inc/
+│   ├── fsr_sensor.h       # Header sensor tekanan
+│   └── servo_motor.h      # Header motor servo
+├── Src/
+│   ├── fsr_sensor.c       # Implementasi pembacaan sensor FSR
+│   ├── servo_motor.c      # Implementasi kontrol servo
+│   └── main.c             # Integrasi utama sistem berbasis STM32 HAL
+├── test2.c                # Simulasi input tegangan → PWM → jarak handle (untuk MinGW)
+└── README.md              # Dokumentasi proyek
 ```
 
 ---
 
-## Penjelasan Alur Program
+## 🔧 Penjelasan Kode `main.c`
 
-1. Inisialisasi seluruh peripheral (GPIO, ADC, TIM, UART, DMA).
-2. Pembacaan nilai tekanan dari sensor FSR melalui ADC1.
-3. Mapping nilai ADC (0–4095) ke durasi pulsa PWM servo (1000–2000 µs).
-4. Servo disesuaikan berdasarkan nilai tekanan.
-5. Siklus dijalankan terus-menerus dengan delay stabilisasi 50 ms.
+`main.c` berisi loop utama sistem embedded yang bekerja sebagai berikut:
 
-```c
-// Mapping nilai ADC ke durasi pulse (PWM servo)
-pulse = 1000 + (adcValue * 1000 / 4095);
-__HAL_TIM_SET_COMPARE(&htim2, TIM_CHANNEL_1, pulse);
-```
+1. **Inisialisasi Perangkat:**
+   - `HAL_Init()` dan `SystemClock_Config()` menjalankan setup awal STM32.
+   - Peripherals seperti ADC, TIM2 (PWM), UART, DMA, dan GPIO diinisialisasi.
 
----
+2. **Loop Utama:**
+   - Tekanan dibaca dari sensor FSR melalui `HAL_ADC_GetValue()`.
+   - Jika nilai tekanan melewati ambang batas (`adc_threshold`), sistem menghitung nilai PWM untuk mengatur sudut motor servo.
+   - Servo dikendalikan via `__HAL_TIM_SET_COMPARE()` berdasarkan hasil pengolahan ADC.
+   - Delay 50 ms menjaga siklus pembacaan stabil.
 
-## Konfigurasi Periferal STM32 (dari CubeMX)
-
-- **ADC1 (PA0 - FSR input)**
-  - Resolution: 12-bit
-  - Trigger: Software
-  - Mode: Single Conversion
-
-- **TIM2 - PWM Output (PA5 atau sesuai pin servo)**
-  - Prescaler: 83 (1 MHz timer clock)
-  - Period: 19999 (20 ms PWM frame)
-  - Channel 1: PWM Mode 1
-
-- **USART2 (PA2 TX, PA3 RX)**
-  - Baudrate: 115200
-  - Mode: TX & RX
-
-- **DMA** (untuk komunikasi UART - optional)
+3. **Fail-Safe:**
+   - Jika terjadi error pada proses ADC atau PWM, sistem akan masuk ke `Error_Handler()` dengan loop tak berhingga dan interrupt dimatikan.
 
 ---
 
-## Kompilasi dan Deploy
-![Screenshot 2025-04-16 132828](https://github.com/user-attachments/assets/c4a6eb6d-043b-49d2-a59b-2d5afcec2367)
+## 🧪 Penjelasan `test2.c`: Simulasi PWM Handle (Via MinGW)
 
-### Menggunakan Keil uVision
+File `test2.c` digunakan untuk **simulasi berbasis terminal** tanpa perangkat keras, dan mensimulasikan alur konversi tegangan ke:
 
-1. Buka `Tubes-2 pemkon kel12.uvprojx`
-2. Klik "Rebuild All"
-3. Hubungkan board STM32 ke komputer
-4. Klik "Download" untuk upload ke board
+- Nilai ADC
+- PWM output (dalam mikrodetik)
+- Estimasi jarak handle kruk (dalam cm)
 
-### Simulasi Logika di VSCode (tanpa dependency STM32)
+### Cara Kerja:
+1. User memasukkan nilai tegangan (0.0–3.3V).
+2. Program mengkonversinya ke nilai ADC (0–4095).
+3. PWM dihitung dari ADC menggunakan formula:
+   ```
+   PWM = PWM_MIN + ((adc * (PWM_MAX - PWM_MIN)) / ADC_MAX)
+   ```
+4. Posisi handle dihitung dalam cm dari PWM, diasumsikan dalam rentang 0–10 cm.
+5. Semua hasil ditampilkan ke terminal, termasuk pemanggilan fungsi `set_servo_position()` sebagai simulasi perintah fisik ke motor servo.
 
-1. Pastikan file `main.c` telah dimodifikasi agar tidak bergantung pada header HAL
-2. Kompilasi dengan GCC:
+### Tujuan:
+- Menguji logika konversi tegangan ke PWM tanpa hardware.
+- Menyediakan **alat bantu simulasi** untuk debugging atau verifikasi alur matematis sebelum deployment ke STM32.
 
+---
+
+## ▶️ Cara Menjalankan Simulasi (test2.c)
+
+### 1. Kompilasi dengan MinGW:
 ```bash
-gcc main.c -o kruk_simulasi
-./kruk_simulasi
+gcc test2.c -o simulasi_servo
 ```
 
-> Catatan: Versi simulasi hanya untuk menguji algoritma pemetaan ADC–PWM
+### 2. Jalankan program:
+```bash
+./simulasi_servo
+```
+
+### 3. Masukkan tegangan 0.0 – 3.3 dan lihat hasil simulasi PWM serta jarak handle.
 
 ---
 
-## Pengujian dan Validasi
+## 📌 Kesimpulan
 
-- Sensor FSR diuji menggunakan tekanan manual bertingkat dan dibandingkan dengan hasil pembacaan ADC.
-- PWM servo divalidasi menggunakan osiloskop untuk melihat durasi pulsa aktual.
-- Kruk diuji pada pengguna untuk melihat konsistensi responsif terhadap beban.
+Proyek ini menerapkan prinsip pengembangan **V-Model**, mulai dari analisis kebutuhan hingga pengujian sistem menggunakan simulasi berbasis terminal dan kode embedded STM32 HAL. Pendekatan ini memungkinkan sistem untuk diujicoba dengan atau tanpa perangkat keras, mempercepat iterasi pengembangan, dan meningkatkan keandalan sistem bantu jalan adaptif seperti kruk cerdas.
 
----
+🔗 [Repositori GitHub](https://github.com/muhammadbagaskarakun/Tugas-Pemrograman-Kontroller-Kelompok-12-Teknik-Instrumentasi-2023)
 
-## Lisensi
+--- 
 
-Proyek ini menggunakan lisensi MIT. Bebas digunakan dan dimodifikasi untuk tujuan pendidikan maupun pengembangan lebih lanjut.
-
----
-
-## Pengembangan Selanjutnya
-
-- Implementasi fitur alarm untuk tekanan melebihi ambang batas.
-- Logging data tekanan via UART ke PC.
-- Integrasi Bluetooth untuk monitoring tekanan secara wireless.
+Kalau kamu mau, aku juga bisa bantu buatkan versi markdown siap pakai atau file `README.md` langsung. Mau aku kirimkan file-nya juga?
